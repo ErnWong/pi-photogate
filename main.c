@@ -2,6 +2,28 @@
 #include <stdbool.h>
 #include <wiringPi.h>
 
+// Threshold values:
+//  - Direct: ?
+//  - Direct + Schmitt Trigger: ?
+//  - Pulldown: 5000
+//  - Pulldown + Schmitt Trigger: 0 
+#define FLICKER_THRESHOLD 0
+
+#define DATALOG 1
+#define FLICKERLOG 0
+
+#define datalog(...) \
+  do { \
+    if (DATALOG) \
+      printf(__VA_ARGS__); \
+  } while (0);
+
+#define flickerlog(...) \
+  do { \
+    if (FLICKERLOG) \
+      printf(__VA_ARGS__); \
+  } while (0);
+
 int main()
 {
   wiringPiSetup();
@@ -10,40 +32,44 @@ int main()
   bool prev = false;
   unsigned long long int frames = 0;
 
-  bool hasChanged = false;
-  double runningFrequency = 0;
-  double runningError = 0;
-  unsigned int nextUpdateMicros = 0;
-  int flickers = 0;
+  unsigned int prevChangeMicros = 0;
+  bool debouncedValue = false;
+
+  printf("Just to let you know that this program is actually running ^_^\n");
+
   while (1)
   {
     unsigned int currentMicros = micros();
     bool current = digitalRead(0);
     if (!prev && current)
     {
-      double timeDifference = currentMicros - prevMicros;
-      timeDifference *= 1E-6;
-      double frequency = 1 / timeDifference;
-      double timePerFrame = timeDifference / frames;
-      double maxFrequency = 1 / (timeDifference - timePerFrame);
-      //printf("\r                                                                                 \r");
-      //printf("1 || %f +/- %f Hz\n", frequency, maxFrequency - frequency);
-      runningFrequency = frequency;
-      runningError = maxFrequency - frequency;
-      prevMicros = currentMicros;
-      frames = 0;
-      hasChanged = true;
-      flickers++;
+      unsigned int duration = currentMicros - prevChangeMicros;
+      flickerlog("LOW  for %d milliseconds.\n", duration);
+      if (duration > FLICKER_THRESHOLD && !debouncedValue)
+      {
+        debouncedValue = true;
+
+        double timeDifference = currentMicros - prevMicros;
+        timeDifference *= 1E-6;
+        double frequency = 1 / timeDifference;
+        double timePerFrame = timeDifference / frames;
+        double maxFrequency = 1 / (timeDifference - timePerFrame);
+        double frequencyError = maxFrequency - frequency;
+        prevMicros = currentMicros;
+        frames = 0;
+        datalog("Frequency: %f +/- %f\n", frequency, frequencyError);
+      }
+      prevChangeMicros = currentMicros;
     }
-    //printf("%d\n", current);
-    if (currentMicros > nextUpdateMicros)
+    else if (prev && !current)
     {
-      //if (!hasChanged) puts("--");
-      //else printf("%f +/- %f Hz\n", runningFrequency, runningError);
-      printf("%d\n", flickers);
-      nextUpdateMicros = currentMicros + 5E5;
-      hasChanged = false;
-      flickers = 0;
+      unsigned int duration = currentMicros - prevChangeMicros;
+      flickerlog("HIGH for %d milliseconds.\n", duration);
+      if (duration > FLICKER_THRESHOLD && debouncedValue)
+      {
+        debouncedValue = false;
+      }
+      prevChangeMicros = currentMicros;
     }
     prev = current;
     frames++;

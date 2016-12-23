@@ -16,7 +16,7 @@ If feeling courageous, follow with caution.
 - A handful of male-male jumper wires and female-male jumper wires. (Make sure their wire-gauge fits the breadboard snugly)
 - Maybe some crocodile clips would come in handy, as well as a multimeter.
 
-## Handlind precautions
+## Handling precautions
 
 The BJT transistors and the raspberry pi could potentially be damaged (pun) by electrostatic discharge.
 
@@ -44,7 +44,7 @@ The reduced base voltage of Q2 causes Q2 to start turning off, making the voltag
 
 As you can see, the entire cycle is a positive feedback loop, causing the transistors to "snap" on and off once the input voltage crosses the threshold. This is how the schmitt trigger works in a nutshell.
 
-Another useful feature of the schmitt trigger is hysteresis. Once the trigger changes from LOW to HIGH, it requires a lower voltage to change it back from HIGH to LOW, and vice versa. This eliminates most of the noise from the photodiode. 
+Another useful feature of the schmitt trigger is hysteresis. Once the trigger changes from LOW to HIGH, it requires a lower voltage to change it back from HIGH to LOW, and vice versa. This eliminates most of the noise from the photodiode.
 
 ## Program Dependencies
 

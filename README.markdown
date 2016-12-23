@@ -48,7 +48,7 @@ Another useful feature of the schmitt trigger is hysteresis. Once the trigger ch
 
 ## Program Dependencies
 
-The program uses [WiringPi](wiringpi.com) so you'll need to [install](wiringpi.com/download-and-install/) on your raspberry pi before you embark your journey.
+The program uses [WiringPi](http://wiringpi.com) so you'll need to [install](http://wiringpi.com/download-and-install/) on your raspberry pi before you embark your journey.
 
 ## Getting it to work
 

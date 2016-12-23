@@ -24,7 +24,7 @@ The BJT transistors and the raspberry pi could potentially be damaged (pun) by e
 
 Each photogate uses the following circuitry:
 
-![LED reverse biased, connected to a pull down resister, and fed into a schmitt trigger made out of BJT.](circuit.svg?raw=true)
+![LED reverse biased, connected to a pull down resister, and fed into a schmitt trigger made out of BJT.](circuit.png?raw=true)
 
 ### Finding the right pull down resistance
 

@@ -112,8 +112,9 @@ photogateUpdate(Photogate * p, unsigned int currMicros)
         p->maxFreq = 1 / (p->timeDiff - p->framePeriod);
         p->freqError = p->maxFreq - p->freq;
 
-        double dt = p->timeDiff >= 1 ? 1 : 0;
-        p->freqSmoothed += (p->freq - p->freqSmoothed) * p->smoothing * dt;
+        double coeff = p->timeDiff * p->smoothing;
+        if (coeff >= 1) coeff = 1;
+        p->freqSmoothed += (p->freq - p->freqSmoothed) * coeff;
 
         p->frames = 0;
         p->prevHighMicros = currMicros;
